@@ -17,21 +17,27 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libfontconfig1 \
     libxi6 \
     libgtk-3-0 && \
-    pip install -U pip && \
-    pip install projector-installer --user && \
-    conda update -y conda && conda install python=${PYTHON_VERSION} && \
     mkdir -p /opt/pycharm && \
     curl -L "https://download.jetbrains.com/product?code=PCC&latest&distribution=linux" \
     | tar -C /opt/pycharm --strip-components 1 -xzvf - && \
     chown jovyan /opt/pycharm/bin/idea.properties && \
-    ln -s /opt/pycharm/bin/pycharm.sh /usr/bin/pycharm
+    ln -s /opt/pycharm/bin/pycharm.sh /usr/bin/pycharm && \
+    pip install -U pip && \
+    conda update -y conda && \
+    conda install python=${PYTHON_VERSION} && \
+    pip install jupyter-projector-proxy && \
+    jupyter labextension install @jupyterlab/server-proxy && \
 #
 # sudo
 #
 RUN apt-get update && apt-get install -y sudo && \
     usermod -aG sudo ${NB_USER} && \
     echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+#
+# projector & jupyter-projector-proxy
+#
+USER $NB_UID
+RUN pip install projector-installer --user
 WORKDIR /home/jovyan
 EXPOSE 8888
-USER $NB_UID
 CMD jupyter notebook --no-browser --port 8888 --ip=*
