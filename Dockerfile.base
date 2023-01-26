@@ -26,16 +26,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     conda update -y conda && \
     conda install python=${PYTHON_VERSION} && \
     pip install jupyter-projector-proxy && \
-    jupyter labextension install @jupyterlab/server-proxy && \
+    jupyter labextension install @jupyterlab/server-proxy
 #
 # sudo
 #
 RUN apt-get update && apt-get install -y sudo && \
     usermod -aG sudo ${NB_USER} && \
     echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
-#
-# projector & jupyter-projector-proxy
-#
 USER $NB_UID
 RUN pip install projector-installer --user
 WORKDIR /home/jovyan
