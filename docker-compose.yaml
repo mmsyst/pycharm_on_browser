@@ -1,7 +1,7 @@
 version: "3.7"
 services:
   pycharm:
-    image: pycharm-p:23.01.26
+    image: pycharm-c:23.01.26
     ports:
       - "8888:8888"
     #volumes:

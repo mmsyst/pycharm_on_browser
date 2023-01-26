@@ -1,4 +1,4 @@
-FROM pycharm-p:base
+FROM pycharm-c:base
 COPY ./requirements.txt /tmp/requirements.txt
 #
 # install & clean

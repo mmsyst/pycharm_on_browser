@@ -2,7 +2,7 @@
 cd `dirname $0`
 set -euxo pipefail
 
-REPOSITORY=pycharm-p
+REPOSITORY=pycharm-c
 TAG=23.01.26
 IS_GPU=0
 

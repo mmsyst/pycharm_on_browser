@@ -1,4 +1,4 @@
-FROM pycharm-p:base
+FROM pycharm-c:base
 COPY ./requirements.gpu.txt /tmp/requirements.txt
 #
 # gpu
