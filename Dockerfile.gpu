@@ -1,0 +1,77 @@
+FROM pycharm-p:base
+COPY ./requirements.gpu.txt /tmp/requirements.txt
+#
+# gpu
+#
+# ubuntu 20.04
+# https://github.com/jupyter/docker-stacks/blob/main/base-notebook/Dockerfile
+ENV OS ubuntu2004
+ENV NVARCH x86_64
+ENV NVIDIA_REQUIRE_CUDA "cuda>=11.2 brand=tesla,driver>=418,driver<419"
+ENV NV_CUDA_CUDART_VERSION 11.2.152-1
+ENV NV_CUDA_COMPAT_PACKAGE cuda-compat-11-2
+
+ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64
+ENV NVIDIA_VISIBLE_DEVICES all
+ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
+
+ENV CUDA_VERSION 11.2
+ENV CUDNN_VERSION 8.1.1.33
+ENV NV_CUDA_LIB_VERSION "11.2.2-1"
+
+ENV NV_CUDA_CUDART_DEV_VERSION 11.2.152-1
+ENV NV_NVML_DEV_VERSION 11.2.152-1
+ENV NV_LIBCUSPARSE_DEV_VERSION 11.4.1.1152-1
+ENV NV_LIBNPP_DEV_VERSION 11.3.2.152-1
+ENV NV_LIBNPP_DEV_PACKAGE libnpp-dev-11-2=${NV_LIBNPP_DEV_VERSION}
+
+ENV NV_LIBCUBLAS_DEV_VERSION 11.4.1.1043-1
+ENV NV_LIBCUBLAS_DEV_PACKAGE_NAME libcublas-dev-11-2
+ENV NV_LIBCUBLAS_DEV_PACKAGE ${NV_LIBCUBLAS_DEV_PACKAGE_NAME}=${NV_LIBCUBLAS_DEV_VERSION}
+
+ENV NV_NVPROF_VERSION 11.2.152-1
+ENV NV_NVPROF_DEV_PACKAGE cuda-nvprof-11-2=${NV_NVPROF_VERSION}
+
+ENV NV_LIBNCCL_DEV_PACKAGE_NAME libnccl-dev
+ENV NV_LIBNCCL_DEV_PACKAGE_VERSION 2.8.4-1
+ENV NCCL_VERSION 2.8.4-1
+ENV NV_LIBNCCL_DEV_PACKAGE ${NV_LIBNCCL_DEV_PACKAGE_NAME}=${NV_LIBNCCL_DEV_PACKAGE_VERSION}+cuda11.2
+
+RUN sed -i 's@archive.ubuntu.com@ftp.jaist.ac.jp/pub/Linux@g' /etc/apt/sources.list \
+    && apt-get update && apt-get install -y --no-install-recommends wget software-properties-common tzdata dirmngr gpg-agent \
+    && apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/${OS}/x86_64/3bf863cc.pub \
+    && wget https://developer.download.nvidia.com/compute/cuda/repos/$OS/x86_64/cuda-$OS.pin \
+    && mv cuda-$OS.pin /etc/apt/preferences.d/cuda-repository-pin-600 \
+    && apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/$OS/x86_64/7fa2af80.pub \
+    && add-apt-repository "deb https://developer.download.nvidia.com/compute/cuda/repos/$OS/x86_64/ /" \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends cuda-cudart-dev-11-2=${NV_CUDA_CUDART_DEV_VERSION} \
+    cuda-command-line-tools-11-2=${NV_CUDA_LIB_VERSION} \
+    cuda-minimal-build-11-2=${NV_CUDA_LIB_VERSION} \
+    cuda-libraries-dev-11-2=${NV_CUDA_LIB_VERSION} \
+    cuda-nvml-dev-11-2=${NV_NVML_DEV_VERSION} \
+    ${NV_NVPROF_DEV_PACKAGE} \
+    ${NV_LIBNPP_DEV_PACKAGE} \
+    libcusparse-dev-11-2=${NV_LIBCUSPARSE_DEV_VERSION} \
+    ${NV_LIBCUBLAS_DEV_PACKAGE} \
+    libnccl2=${NCCL_VERSION}+cuda11.2 \
+    ${NV_LIBNCCL_DEV_PACKAGE} \
+    ${NV_CUDA_COMPAT_PACKAGE} \
+    libcudnn8=$CUDNN_VERSION-1+cuda$CUDA_VERSION && \
+    apt-mark hold libcudnn8 \
+    && ln -s cuda-11.2 /usr/local/cuda && \
+    rm -rf /var/lib/apt/lists/* \
+    && echo "/usr/local/nvidia/lib" >> /etc/ld.so.conf.d/nvidia.conf \
+    && echo "/usr/local/nvidia/lib64" >> /etc/ld.so.conf.d/nvidia.conf
+#
+# install & clean
+#
+USER root
+RUN pip install -r /tmp/requirements.txt && \
+    jupyter lab clean -y && \
+    npm cache clean --force && \
+    conda clean --all -f -y
+WORKDIR /home/jovyan
+EXPOSE 8888
+USER $NB_UID
+CMD jupyter lab --no-browser --port 8888 --ip=* --allow-root --NotebookApp.token='' --NotebookApp.password=''

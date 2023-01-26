@@ -1,0 +1,16 @@
+version: "3.7"
+services:
+  pycharm:
+    image: pycharm-p:23.01.26
+    ports:
+      - "8888:8888"
+    #volumes:
+    #  - ./work:/home/dev/app/
+    #  - app-cache:/home/dev/.gradle/:rw
+    #environment:
+    #  - JAVA_OPTS=-server -Xms1024M -Xmx1024M -XX:MetaspaceSize=128m -Xss3m
+    # tty: true
+    # command: ["/bin/sh", "-c", "while :; do sleep 10; done"]
+    command: ["jupyter", "lab", "--no-browser", "--port", "8888", "--ip=*", "--allow-root", "--NotebookApp.token=''", "--NotebookApp.password=''"]
+volumes:
+  app-cache:

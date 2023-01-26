@@ -1,0 +1,14 @@
+FROM pycharm-p:base
+COPY ./requirements.txt /tmp/requirements.txt
+#
+# install & clean
+#
+USER root
+RUN pip install -r /tmp/requirements.txt && \
+    jupyter lab clean -y && \
+    npm cache clean --force && \
+    conda clean --all -f -y
+USER $NB_UID
+WORKDIR /home/jovyan
+EXPOSE 8888
+CMD jupyter lab --no-browser --port 8888 --ip=* --allow-root --NotebookApp.token='' --NotebookApp.password=''
