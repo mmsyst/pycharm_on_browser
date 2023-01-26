@@ -1,7 +1,7 @@
 FROM jupyter/minimal-notebook:python-3.8.8
 USER root
 WORKDIR /tmp
-ENV PYTHON_VERSION=3.8.11
+ENV PYTHON_VERSION=3.8.15
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     ca-certificates \
@@ -24,7 +24,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     chown jovyan /opt/pycharm/bin/idea.properties && \
     ln -s /opt/pycharm/bin/pycharm.sh /usr/bin/pycharm && \
     pip install -U pip && \
-    conda update -y conda && \
+    conda update -n base conda && \
     conda install python=${PYTHON_VERSION} && \
     pip install jupyter-projector-proxy && \
     jupyter labextension install @jupyterlab/server-proxy
