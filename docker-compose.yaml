@@ -4,8 +4,8 @@ services:
     image: pycharm-c:23.01.26
     ports:
       - "8888:8888"
-    #volumes:
-    #  - ./work:/home/dev/app/
+    volumes:
+      - ../../src:/home/jovyan/work/
     #  - app-cache:/home/dev/.gradle/:rw
     #environment:
     #  - JAVA_OPTS=-server -Xms1024M -Xmx1024M -XX:MetaspaceSize=128m -Xss3m

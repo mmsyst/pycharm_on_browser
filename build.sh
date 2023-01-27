@@ -4,7 +4,7 @@ set -euxo pipefail
 
 REPOSITORY=pycharm-c
 TAG=23.01.26
-IS_GPU=0
+IS_GPU=1
 
 TMP_NAME=$(docker image ls --format "{{.ID}}" --filter "reference=${REPOSITORY}:base")
 if [ "${TMP_NAME}" = "" ]; then
