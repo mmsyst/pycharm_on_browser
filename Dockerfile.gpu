@@ -5,6 +5,7 @@ COPY ./requirements.gpu.txt /tmp/requirements.txt
 #
 # ubuntu 20.04
 # https://github.com/jupyter/docker-stacks/blob/main/base-notebook/Dockerfile
+USER root
 ENV OS ubuntu2004
 ENV NVARCH x86_64
 ENV NVIDIA_REQUIRE_CUDA "cuda>=11.2 brand=tesla,driver>=418,driver<419"

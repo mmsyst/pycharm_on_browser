@@ -5,7 +5,7 @@ services:
     ports:
       - "8888:8888"
     volumes:
-      - ../../src:/home/jovyan/work/
+    #  - ../../src:/home/jovyan/work/
     #  - app-cache:/home/dev/.gradle/:rw
     #environment:
     #  - JAVA_OPTS=-server -Xms1024M -Xmx1024M -XX:MetaspaceSize=128m -Xss3m
